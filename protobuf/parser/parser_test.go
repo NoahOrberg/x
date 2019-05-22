@@ -6,10 +6,10 @@ package parser
 import (
 	"testing"
 
+	"github.com/NoahOrberg/x/protobuf/ast"
+	"github.com/NoahOrberg/x/protobuf/gendesc"
 	"github.com/golang/protobuf/proto"
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
-	"myitcv.io/protobuf/ast"
-	"myitcv.io/protobuf/gendesc"
 )
 
 // tryParse attempts to parse the input, and verifies that it matches

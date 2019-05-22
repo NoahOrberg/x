@@ -12,9 +12,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/NoahOrberg/x/protobuf/ast"
 	"github.com/golang/protobuf/proto"
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
-	"myitcv.io/protobuf/ast"
 )
 
 func Generate(fs *ast.FileSet) (*pb.FileDescriptorSet, error) {
