@@ -351,6 +351,7 @@ type Method struct {
 	// InTypeName/OutTypeName are the raw names parsed from the input.
 	// InType/OutType is set during resolution; it will be a *Message.
 	InTypeName, OutTypeName string
+	InTypePos, OutTypePos   Position
 	InType, OutType         interface{}
 
 	// TODO: support streaming methods
@@ -449,8 +450,9 @@ func InlineComment(n Node) *Comment {
 // Position describes a source position in an input file.
 // It is only valid if the line number is positive.
 type Position struct {
-	Line   int // 1-based line number
-	Offset int // 0-based byte offset
+	Line      int // 1-based line number
+	Offset    int // 0-based byte offset
+	Character int // 1-based character number
 }
 
 func (pos Position) IsValid() bool              { return pos.Line > 0 }

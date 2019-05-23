@@ -226,7 +226,7 @@ func (r *resolver) resolveFieldTypeName(s *scope, name string) (interface{}, boo
 	// field must be a named type, message or enum
 	o := r.resolveName(s, name)
 	if o != nil {
-		//log.Printf("(resolved %q to %q)", name, o.fullName())
+		// log.Printf("(resolved %q to %q)", name, o.fullName())
 		return o.last(), true
 	}
 	return nil, false

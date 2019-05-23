@@ -126,10 +126,11 @@ func ParseFiles(filenames []string, paths []string) (*ast.FileSet, error) {
 }
 
 type parseError struct {
-	message  string
-	filename string
-	line     int // 1-based line number
-	offset   int // 0-based byte offset from start of input
+	message   string
+	filename  string
+	line      int // 1-based line number
+	offset    int // 0-based byte offset from start of input
+	character int // 1-based column number
 }
 
 func (pe *parseError) Error() string {
@@ -145,33 +146,34 @@ func (pe *parseError) Error() string {
 var eof = &parseError{message: "EOF"}
 
 type token struct {
-	value        string
-	err          *parseError
-	line, offset int
-	unquoted     string // unquoted version of value
+	value                   string
+	err                     *parseError
+	line, offset, character int
+	unquoted                string // unquoted version of value
 }
 
 func (t *token) astPosition() ast.Position {
 	return ast.Position{
-		Line:   t.line,
-		Offset: t.offset,
+		Line:      t.line,
+		Offset:    t.offset,
+		Character: t.character,
 	}
 }
 
 type parser struct {
-	filename     string
-	s            string // remaining input
-	done         bool
-	backed       bool // whether back() was called
-	offset, line int
-	cur          token
+	filename                string
+	s                       string // remaining input
+	done                    bool
+	backed                  bool // whether back() was called
+	offset, line, character int
+	cur                     token
 
 	comments []comment // accumulated during parse
 }
 
 type comment struct {
-	text         string
-	line, offset int
+	text                    string
+	line, offset, character int
 }
 
 func newParser(filename, s string) *parser {
@@ -323,12 +325,14 @@ func (p *parser) readFile(f *ast.File) *parseError {
 		}
 		c := &ast.Comment{
 			Start: ast.Position{
-				Line:   p.comments[0].line,
-				Offset: p.comments[0].offset,
+				Line:      p.comments[0].line,
+				Offset:    p.comments[0].offset,
+				Character: p.comments[0].character,
 			},
 			End: ast.Position{
-				Line:   p.comments[n-1].line,
-				Offset: p.comments[n-1].offset,
+				Line:      p.comments[n-1].line,
+				Offset:    p.comments[n-1].offset,
+				Character: p.comments[n-1].character,
 			},
 		}
 		for _, comm := range p.comments[:n] {
@@ -957,6 +961,11 @@ func (p *parser) readService(srv *ast.Service) *parseError {
 			return tok.err
 		}
 		mth.InTypeName = tok.value // TODO: validate
+		mth.Position = ast.Position{
+			Line:      tok.line,
+			Offset:    tok.offset,
+			Character: tok.character,
+		}
 		if err := p.readToken(")"); err != nil {
 			return err
 		}
@@ -1146,7 +1155,7 @@ func (p *parser) advance() {
 
 	// Start of non-whitespace
 	p.cur.err = nil
-	p.cur.offset, p.cur.line = p.offset, p.line
+	p.cur.offset, p.cur.line, p.cur.character = p.offset, p.line, p.character
 	switch p.s[0] {
 	// TODO: more cases, like punctuation.
 	case ';', '{', '}', '=', '[', ']', ',', '<', '>', '(', ')':
@@ -1187,6 +1196,7 @@ func (p *parser) advance() {
 		p.cur.value, p.s = p.s[:i], p.s[i:]
 	}
 	p.offset += len(p.cur.value)
+	p.character += len(p.cur.value)
 }
 
 func (p *parser) skipWhitespaceAndComments() {
@@ -1195,13 +1205,14 @@ func (p *parser) skipWhitespaceAndComments() {
 		if isWhitespace(p.s[i]) {
 			if p.s[i] == '\n' {
 				p.line++
+				p.character = 0
 			}
 			i++
 			continue
 		}
 		if i+1 < len(p.s) && p.s[i] == '/' && p.s[i+1] == '/' {
 			si := i + 2
-			c := comment{line: p.line, offset: p.offset + i}
+			c := comment{line: p.line, offset: p.offset + i, character: p.character}
 			// XXX: set c.text
 			// comment; skip to end of line or input
 			for i < len(p.s) && p.s[i] != '\n' {
@@ -1219,7 +1230,7 @@ func (p *parser) skipWhitespaceAndComments() {
 		}
 		if i+1 < len(p.s) && p.s[i] == '/' && p.s[i+1] == '*' {
 			si := i + 2
-			c := comment{line: p.line, offset: p.offset + i}
+			c := comment{line: p.line, offset: p.offset + i, character: p.character + i}
 			// comment; skip to end of comment or input
 			found := false
 			for i < len(p.s) {
@@ -1245,6 +1256,7 @@ func (p *parser) skipWhitespaceAndComments() {
 		break
 	}
 	p.offset += i
+	p.character += i
 	p.s = p.s[i:]
 	if len(p.s) == 0 {
 		p.done = true
@@ -1253,10 +1265,11 @@ func (p *parser) skipWhitespaceAndComments() {
 
 func (p *parser) errorf(format string, a ...interface{}) *parseError {
 	pe := &parseError{
-		message:  fmt.Sprintf(format, a...),
-		filename: p.filename,
-		line:     p.cur.line,
-		offset:   p.cur.offset,
+		message:   fmt.Sprintf(format, a...),
+		filename:  p.filename,
+		line:      p.cur.line,
+		offset:    p.cur.offset,
+		character: p.cur.character,
 	}
 	p.cur.err = pe
 	p.done = true
