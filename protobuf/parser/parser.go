@@ -1218,6 +1218,7 @@ func (p *parser) skipWhitespaceAndComments() {
 				p.character = 0
 			}
 			i++
+			p.character++
 			continue
 		}
 		if i+1 < len(p.s) && p.s[i] == '/' && p.s[i+1] == '/' {
