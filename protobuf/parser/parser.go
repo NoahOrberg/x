@@ -971,6 +971,9 @@ func (p *parser) readService(srv *ast.Service) *parseError {
 			return tok.err
 		}
 		mth.InTypeName = tok.value // TODO: validate
+		mth.InTypeNamePosStart = tok.astPosition()
+		mth.InTypeNamePosEnd = tok.astEndPosition(tok.value)
+
 		mth.Position = ast.Position{
 			Line:      tok.line,
 			Offset:    tok.offset,
@@ -990,6 +993,8 @@ func (p *parser) readService(srv *ast.Service) *parseError {
 			return tok.err
 		}
 		mth.OutTypeName = tok.value // TODO: validate
+		mth.OutTypeNamePosStart = tok.astPosition()
+		mth.OutTypeNamePosEnd = tok.astEndPosition(tok.value)
 
 		if err := p.readToken(")"); err != nil {
 			return err

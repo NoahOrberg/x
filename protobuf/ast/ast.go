@@ -350,9 +350,10 @@ type Method struct {
 
 	// InTypeName/OutTypeName are the raw names parsed from the input.
 	// InType/OutType is set during resolution; it will be a *Message.
-	InTypeName, OutTypeName string
-	InTypePos, OutTypePos   Position
-	InType, OutType         interface{}
+	InTypeName, OutTypeName                string
+	InTypeNamePosStart, InTypeNamePosEnd   Position
+	OutTypeNamePosStart, OutTypeNamePosEnd Position
+	InType, OutType                        interface{}
 
 	// TODO: support streaming methods
 	Options [][2]string // slice of key/value pairs
