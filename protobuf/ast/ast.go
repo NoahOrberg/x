@@ -183,7 +183,7 @@ func (o *Oneof) File() *File {
 
 // Field represents a field in a message.
 type Field struct {
-	Position Position // position of "required"/"optional"/"repeated"/type
+	Start, End Position // position of "required"/"optional"/"repeated"/type's head char and tail char
 
 	// TypeName is the raw name parsed from the input.
 	// Type is set during resolution; it will be a FieldType, *Message or *Enum.
@@ -223,7 +223,7 @@ var _ MessageOrField = &Field{}
 func (f *Field) implFileOrNode()     {}
 func (f *Field) implMessageOrField() {}
 
-func (f *Field) Pos() Position { return f.Position }
+func (f *Field) Pos() Position { return f.Start }
 func (f *Field) File() *File {
 	switch up := f.Up.(type) {
 	case *Message:

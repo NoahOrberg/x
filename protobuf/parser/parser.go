@@ -160,6 +160,15 @@ func (t *token) astPosition() ast.Position {
 	}
 }
 
+// NOTE: astEndPosition is used by Field.
+func (t *token) astEndPosition(typeName string) ast.Position {
+	return ast.Position{
+		Line:      t.line,
+		Offset:    t.offset + len(typeName),
+		Character: t.character + len(typeName),
+	}
+}
+
 type parser struct {
 	filename                string
 	s                       string // remaining input
@@ -527,7 +536,8 @@ func (p *parser) readField(f *ast.Field) *parseError {
 	if tok.err != nil {
 		return tok.err
 	}
-	f.Position = p.cur.astPosition()
+	f.Start = p.cur.astPosition()
+	f.End = p.cur.astEndPosition(tok.value)
 	switch tok.value {
 	case "required":
 		f.Required = true
@@ -1256,7 +1266,6 @@ func (p *parser) skipWhitespaceAndComments() {
 		break
 	}
 	p.offset += i
-	p.character += i
 	p.s = p.s[i:]
 	if len(p.s) == 0 {
 		p.done = true
