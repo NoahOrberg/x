@@ -68,20 +68,24 @@ func (s *scope) findName(name []string) []interface{} {
 				ret = append(ret, fs.findName(name)...)
 			} else {
 				// Match on package name
-				// TODO: fix this for dotted package names
+				// TODO: I dont understand why this code is good...
 				if len(f.Package) == len(name) {
-					match := true
-					for i := range f.Package {
-						match = match && (f.Package[i] == name[i])
-						if !match {
-							break
-						}
-					}
-
-					if match {
-						return []interface{}{f}
-					}
+					return []interface{}{f}
 				}
+				// TODO: fix this for dotted package names
+				// if len(f.Package) == len(name) {
+				// 	match := true
+				// 	for i := range f.Package {
+				// 		match = match && (f.Package[i] == name[i])
+				// 		if !match {
+				// 			break
+				// 		}
+				// 	}
+				//
+				// 	if match {
+				// 		return []interface{}{f}
+				// 	}
+				// }
 			}
 		}
 		return ret
