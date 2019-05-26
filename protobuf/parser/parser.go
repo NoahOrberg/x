@@ -536,8 +536,6 @@ func (p *parser) readField(f *ast.Field) *parseError {
 	if tok.err != nil {
 		return tok.err
 	}
-	f.Start = p.cur.astPosition()
-	f.End = p.cur.astEndPosition(tok.value)
 	switch tok.value {
 	case "required":
 		f.Required = true
@@ -573,6 +571,8 @@ func (p *parser) readField(f *ast.Field) *parseError {
 		p.back()
 	}
 
+	f.Start = p.cur.astPosition()
+	f.End = p.cur.astEndPosition(tok.value)
 	tok = p.next()
 	if tok.err != nil {
 		return tok.err
@@ -580,6 +580,8 @@ func (p *parser) readField(f *ast.Field) *parseError {
 	f.TypeName = tok.value // checked during resolution
 
 parseFromFieldName:
+	f.Start = p.cur.astPosition()
+	f.End = p.cur.astEndPosition(tok.value)
 	tok = p.next()
 	if tok.err != nil {
 		return tok.err

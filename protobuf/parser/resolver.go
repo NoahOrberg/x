@@ -69,9 +69,7 @@ func (s *scope) findName(name []string) []interface{} {
 			} else {
 				// Match on package name
 				// TODO: I dont understand why this code is good...
-				if len(f.Package) == len(name) {
-					return []interface{}{f}
-				}
+				return []interface{}{f}
 				// TODO: fix this for dotted package names
 				// if len(f.Package) == len(name) {
 				// 	match := true
@@ -280,7 +278,7 @@ func (r *resolver) resolveName(s *scope, name string) *scope {
 
 	// Move up the scope, finding a place where the name makes sense.
 	for ws := s.dup(); !ws.global(); ws.pop() {
-		//log.Printf("Trying to resolve %q in %q", name, ws.fullName())
+		// log.Printf("Trying to resolve %q in %q", name, ws.fullName())
 		if os := matchNameComponents(ws, parts); os != nil {
 			return os
 		}
@@ -292,7 +290,11 @@ func (r *resolver) resolveName(s *scope, name string) *scope {
 func matchNameComponents(s *scope, parts []string) *scope {
 	for i := 1; i <= len(parts); i++ {
 		first, rem := parts[:i], parts[i:]
+		// log.Println("parts: ", parts)
+		// log.Println("first: ", first)
+		// log.Println("rem: ", rem)
 		for _, o := range s.findName(first) {
+			// log.Printf("(matchNameComponents) %s", reflect.TypeOf(o))
 			os := s.dup()
 			os.push(o)
 			if len(rem) == 0 {
