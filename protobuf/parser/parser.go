@@ -164,8 +164,8 @@ func (t *token) astPosition() ast.Position {
 func (t *token) astEndPosition(typeName string) ast.Position {
 	return ast.Position{
 		Line:      t.line,
-		Offset:    t.offset + len(typeName),
-		Character: t.character + len(typeName),
+		Offset:    t.offset + len(typeName) - 1,
+		Character: t.character + len(typeName) - 1,
 	}
 }
 
@@ -528,7 +528,6 @@ func (p *parser) readMessageContents(msg *ast.Message) *parseError {
 
 func (p *parser) readField(f *ast.Field) *parseError {
 	_, inMsg := f.Up.(*ast.Message)
-	f.Start = p.cur.astPosition()
 
 	// TODO: enforce type limitations if f.Oneof != nil
 
@@ -569,18 +568,20 @@ func (p *parser) readField(f *ast.Field) *parseError {
 		goto parseFromFieldName
 	default:
 		// assume this is a type name
+		f.Start = p.cur.astPosition()
+		f.End = p.cur.astEndPosition(tok.value)
 		p.back()
 	}
 
-	f.End = p.cur.astEndPosition(tok.value)
 	tok = p.next()
 	if tok.err != nil {
 		return tok.err
 	}
+	f.Start = p.cur.astPosition()
+	f.End = p.cur.astEndPosition(tok.value)
 	f.TypeName = tok.value // checked during resolution
 
 parseFromFieldName:
-	f.End = p.cur.astEndPosition(tok.value)
 	tok = p.next()
 	if tok.err != nil {
 		return tok.err
