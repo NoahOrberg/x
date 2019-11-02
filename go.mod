@@ -29,3 +29,4 @@ require (
 )
 
 replace github.com/gopherjs/gopherjs => github.com/myitcv/gopherjs v1.12.0
+replace github.com/myitcv/x => myitcv.io v0.0.0-20190927111909-7837eed0ff8e
