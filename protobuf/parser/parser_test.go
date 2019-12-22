@@ -6,8 +6,8 @@ package parser
 import (
 	"testing"
 
-	"github.com/NoahOrberg/x/protobuf/ast"
-	"github.com/NoahOrberg/x/protobuf/gendesc"
+	"github.com/n04ln/x/protobuf/ast"
+	"github.com/n04ln/x/protobuf/gendesc"
 	"github.com/golang/protobuf/proto"
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
 )

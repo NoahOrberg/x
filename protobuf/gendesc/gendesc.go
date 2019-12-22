@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/NoahOrberg/x/protobuf/ast"
+	"github.com/n04ln/x/protobuf/ast"
 	"github.com/golang/protobuf/proto"
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
 )

@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/NoahOrberg/x/protobuf/ast"
+	"github.com/n04ln/x/protobuf/ast"
 )
 
 func resolveSymbols(fset *ast.FileSet) error {

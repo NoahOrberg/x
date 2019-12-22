@@ -1,4 +1,4 @@
-module github.com/NoahOrberg/x
+module github.com/n04ln/x
 
 require (
 	github.com/Quasilyte/inltest v0.7.0

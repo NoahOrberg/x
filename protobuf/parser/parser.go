@@ -16,7 +16,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/NoahOrberg/x/protobuf/ast"
+	"github.com/n04ln/x/protobuf/ast"
 )
 
 const debugging = false

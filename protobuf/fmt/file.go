@@ -6,7 +6,7 @@ package fmt
 import (
 	"strings"
 
-	"github.com/NoahOrberg/x/protobuf/ast"
+	"github.com/n04ln/x/protobuf/ast"
 )
 
 // TODO

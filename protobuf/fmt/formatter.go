@@ -8,8 +8,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/NoahOrberg/x/protobuf/ast"
-	"github.com/NoahOrberg/x/protobuf/parser"
+	"github.com/n04ln/x/protobuf/ast"
+	"github.com/n04ln/x/protobuf/parser"
 )
 
 type Formatter struct {
